@@ -1,14 +1,9 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Alert,
-} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../App';
-import { styles } from 'styles/styles';
+import { styles } from '../styles/styles';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type RegisterScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Register'>;
 
@@ -22,19 +17,54 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleRegister = () => {
+  // Validate email format
+  const validateEmail = (email: string) => {
+    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    return emailPattern.test(email);
+  };
+
+  const handleRegister = async () => {
+    // Check for empty fields
     if (!username || !email || !password || !confirmPassword) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
+
+    // Validate email
+    if (!validateEmail(email)) {
+      Alert.alert('Error', 'Please enter a valid email address');
+      return;
+    }
+
+    // Validate password length
+    if (password.length < 4) {
+      Alert.alert('Error', 'Password must be at least 4 characters');
+      return;
+    }
+
+    // Check if passwords match
     if (password !== confirmPassword) {
       Alert.alert('Error', 'Passwords do not match');
       return;
     }
-    Alert.alert('Success', 'Registration successful', [
-      { text: 'OK', onPress: () => navigation.navigate('Login') }
-    ]);
-  };
+
+    // Save the user credentials in AsyncStorage
+    const existingUsers = JSON.parse(await AsyncStorage.getItem('registeredUsers')??'[]');
+
+  // Check if the username already exists
+  if (existingUsers.some((user: { username: string }) => user.username === username)) {
+    Alert.alert('Error', 'Username already exists');
+    return;
+  }
+
+  // Add the new user to the list
+  const updatedUsers = [...existingUsers, { username, password }];
+  await AsyncStorage.setItem('registeredUsers', JSON.stringify(updatedUsers));
+
+  Alert.alert('Success', 'Registration successful', [
+    { text: 'OK', onPress: () => navigation.navigate('Login') }
+  ]);
+};
 
   return (
     <View style={styles.container}>
@@ -75,4 +105,5 @@ const RegisterScreen: React.FC<Props> = ({ navigation }) => {
     </View>
   );
 };
+
 export default RegisterScreen;

@@ -4,7 +4,7 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#E3F2FD',
   },
   title: {
     fontSize: 24,
@@ -21,7 +21,7 @@ export const styles = StyleSheet.create({
     borderColor: '#ddd',
   },
   button: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#4dfae0',
     padding: 15,
     borderRadius: 5,
     marginTop: 10,
@@ -78,13 +78,30 @@ export const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
     right: 20,
-    backgroundColor: '#007AFF',
+    backgroundColor: '#4dfae0',
     padding: 15,
     borderRadius: 25,
     elevation: 5,
   },
   floatingButtonText: {
     color: 'white',
+    fontWeight: 'bold',
+  },
+  logoutButton: {
+    backgroundColor: '#4dfae0',
+    padding: 15,
+    borderRadius: 50,
+    position: 'absolute',
+    top: -55,
+    left: '100%',
+    transform: [{ translateX: -80 }],
+    width: 100,
+    alignItems: 'center',
+    zIndex: 1,
+  },
+  logoutButtonText: {
+    color: '#fff',
+    fontSize: 16,
     fontWeight: 'bold',
   },
 });
